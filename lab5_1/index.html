@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Система управления рестораном</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header class="app-header">
+        <div class="logo">FoodService IS</div>
+        <nav class="main-nav">
+            <a href="#home">Главная</a>
+            <a href="#menu">Меню</a>
+            <a href="#booking">Бронирование</a>
+            <a href="#courier">Курьеру</a>
+            <a href="#admin">Администратору</a>
+            <a href="#auth" class="btn-login">Войти</a>
+        </nav>
+    </header>
+
+    <main>
+
+        <section id="home" class="view active">
+            <div class="hero-banner">
+                <h1>Французская кухня с доставкой и в ресторане</h1>
+                <p>Забронируйте столик или закажите доставку прямо сейчас.</p>
+                <small style="color: red;">--> Кнопка ведет на форму бронирования</small><br>
+                <a href="#booking" class="btn-primary">Забронировать столик</a>
+            </div>
+        </section>
+
+        <section id="menu" class="view">
+            <h2>Наше Меню</h2>
+            
+            <div class="filters-panel">
+                <label>Тип меню:
+                    <select>
+                        <option>Все</option>
+                        <option>Обеденное</option>
+                        <option>Детское</option>
+                        <option>Банкетное</option>
+                    </select>
+                </label>
+                <button class="btn-secondary">Сортировать по цене</button>
+            </div>
+
+            <div class="menu-grid">
+                <article class="menu-item">
+                    <div class="item-img-placeholder">Фото</div>
+                    <h3>Стейк Рибай</h3>
+                    <p>Говядина мраморная, специи</p>
+                    <span class="price">1200 р.</span>
+                    <button class="btn-add">Добавить</button>
+                </article>
+                
+                <article class="menu-item">
+                    <div class="item-img-placeholder">Фото</div>
+                    <h3>Салат Цезарь</h3>
+                    <p>Курица, салат ромэн, соус</p>
+                    <span class="price">450 р.</span>
+                    <button class="btn-add">Добавить</button>
+                </article>
+                
+                <div class="pagination">
+                    <button class="btn-secondary">Загрузить еще...</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="booking" class="view">
+            <h2>Оформление заказа / Бронь</h2>
+            
+            <form class="booking-form">
+                <div class="form-group">
+                    <label>Тип услуги:</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="service_type" checked> В ресторане</label>
+                        <label><input type="radio" name="service_type"> Доставка</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="fio">ФИО клиента:</label>
+                    <input type="text" id="fio" placeholder="Иванов Иван" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Телефон:</label>
+                    <input type="tel" id="phone" placeholder="+7 (___) ___-__-__" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="datetime">Дата и время:</label>
+                    <input type="datetime-local" id="datetime">
+                    <small class="hint">Бронирование возможно не ранее чем через 1 час от текущего времени.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="hall">Зал:</label>
+                    <select id="hall">
+                        <option>Основной зал</option>
+                        <option>VIP комната</option>
+                        <option>Терраса</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="guests">Количество человек:</label>
+                    <input type="number" id="guests" min="1" max="20">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Подтвердить заказ</button>
+                    <button type="reset" class="btn-secondary">Сбросить</button>
+                </div>
+            </form>
+        </section>
+
+        <section id="courier" class="view">
+            <h2>Мои доставки</h2>
+            <div class="order-list">
+                <div class="order-card">
+                    <div class="order-header">
+                        <strong>Заказ #10234</strong>
+                        <span class="status pending">В пути</span>
+                    </div>
+                    <p>Адрес: ул. Ленина, д. 10, кв. 5</p>
+                    <div class="order-actions">
+                        <button class="btn-small">Отметить как доставленный</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="admin" class="view">
+            <h2>Панель руководителя</h2>
+            
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h3>Суммарная выручка</h3>
+                    <div class="stat-value">150 000 р.</div>
+                    <small>За текущий месяц</small>
+                </div>
+
+                <div class="dashboard-card">
+                    <h3>График заказанных блюд</h3>
+                    <div class="chart-placeholder">
+                        <div class="bar" style="height: 60%;"></div>
+                        <div class="bar" style="height: 80%;"></div>
+                        <div class="bar" style="height: 40%;"></div>
+                        <div class="bar" style="height: 90%;"></div>
+                    </div>
+                    <small>Популярность по дням</small>
+                </div>
+            </div>
+        </section>
+
+        <section id="auth" class="view">
+            <div class="auth-container">
+                <h2>Вход в систему</h2>
+                <form>
+                    <input type="text" placeholder="Логин">
+                    <input type="password" placeholder="Пароль">
+                    <button class="btn-primary">Войти</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="error" class="view">
+            <div class="error-box">
+                <h2>Ошибка 404</h2>
+                <p>Страница не найдена или доступ запрещен.</p>
+                <a href="#home" class="btn-secondary">Вернуться на главную</a>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="app-footer">
+        <p>&copy; 2025 Ресторан "Клод Моне". Все права защищены.</p>
+        <div class="footer-links">
+            <a href="#">Контакты</a>
+            <a href="#">О нас</a>
+        </div>
+    </footer>
+
+</body>
+</html>
