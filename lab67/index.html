@@ -3,126 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ЛР 7: Persistence и Controller (MVC)</title>
-    <link rel="stylesheet" href="styles.css"> 
-    <style> 
-        /* ... Стили для карточек (статусы, order-item и т.д.) ... */
-        .order-item { border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); background-color: #fff; }
-        .order-header { display: flex; justify-content: space-between; align-items: center; }
-        .order-meta { font-size: 0.9em; color: #666; margin-top: 5px; }
-        .status { font-weight: bold; padding: 2px 8px; border-radius: 12px; font-size: 0.8em; color: white; }
-        .подтвержден { background-color: #27ae60; } .в-ожидании { background-color: #f39c12; }
-        .в-пути { background-color: #3498db; } .завершен { background-color: #7f8c8d; }
-        .новый { background-color: #e74c3c; }
-        .actions button { margin-left: 5px; padding: 5px 10px; cursor: pointer; }
-
-        /* Стили для Модального окна редактирования */
-        #edit-modal-container {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background: white;
-            padding: 30px;
-            width: 90%;
-            max-width: 500px;
-            border-radius: 8px;
-        }
-        .modal-content input, .modal-content select {
-            width: 100%;
-            padding: 8px;
-            margin: 5px 0 15px;
-            box-sizing: border-box;
-        }
-        .modal-content label { display: block; margin-top: 10px; font-weight: bold;}
-    </style>
+    <title>Система управления рестораном - ЛР 7</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
     <header class="app-header">
-        <div class="logo">FoodService IS</div>
+        <div class="logo">
+            <i class="fas fa-utensils"></i>
+            Ресторан "Клод Моне"
+        </div>
         <div id="header-user-controls" class="header-controls"></div>
     </header>
 
     <main>
-        <section class="auth-section">
-            <h3>1. Авторизация</h3>
-            <form id="auth-form" class="form-control">
-                <input type="text" id="auth-username" placeholder="Имя (для редактирования)" value="Иванов Иван" required>
-                <button type="submit">Войти</button>
-            </form>
-        </section>
+        <!-- Контейнер для формы авторизации -->
+        <div id="auth-container" class="auth-container"></div>
 
-        <section class="add-section">
-            <h3>2. Добавить новый заказ</h3>
-            <form id="add-form" class="form-control">
-                <input type="text" id="add-desc" placeholder="Описание заказа" required maxlength="199">
-                <select id="add-service" required>
-                    <option value="В ресторане">В ресторане</option>
-                    <option value="Доставка">Доставка</option>
-                </select>
-                <input type="number" id="add-guests" placeholder="Гостей" required min="1" value="1">
-                <input type="text" id="add-phone" placeholder="Телефон" required>
-                <button type="submit" class="btn-primary">Создать заказ</button>
-            </form>
-        </section>
+        <!-- Основной контент -->
+        <div id="main-content" class="main-content">
+            <section class="add-section">
+                <h3><i class="fas fa-plus-circle"></i> Добавить новый заказ</h3>
+                <form id="add-form" class="form-control">
+                    <input type="text" id="add-desc" placeholder="Описание заказа" required maxlength="199">
+                    <select id="add-service" required>
+                        <option value="В ресторане">В ресторане</option>
+                        <option value="Доставка">Доставка</option>
+                    </select>
+                    <input type="number" id="add-guests" placeholder="Количество гостей" required min="1" value="1">
+                    <input type="text" id="add-phone" placeholder="Телефон" required>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-check"></i> Создать заказ
+                    </button>
+                </form>
+            </section>
 
-        <section class="controls">
-            <h3>3. Фильтрация и просмотр</h3>
-            <form id="filter-form" class="form-control">
-                <div id="filter-controls-container">
-                    </div>
-            </form>
-        </section>
-        
-        <section class="order-container">
-            <h3>Список заказов</h3>
-            <div class="order-list" id="order-list-container">
-                </div>
+            <section class="controls">
+                <h3><i class="fas fa-filter"></i> Фильтрация заказов</h3>
+                <form id="filter-form" class="form-control">
+                    <div id="filter-controls-container"></div>
+                </form>
+            </section>
             
-            <div id="load-more-container" class="load-more">
+            <section class="order-container">
+                <h3><i class="fas fa-list"></i> Список заказов</h3>
+                <div class="order-list" id="order-list-container">
+                    <!-- Заказы будут загружены здесь -->
                 </div>
-        </section>
+                
+                <div id="load-more-container" class="load-more"></div>
+            </section>
+        </div>
     </main>
 
-    <div id="edit-modal-container">
+    <!-- Модальное окно редактирования -->
+    <div id="edit-modal-container" class="modal-container">
         <div class="modal-content">
-            <h3>Редактирование заказа</h3>
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> Редактирование заказа</h3>
+                <button class="modal-close" id="edit-cancel-btn">&times;</button>
+            </div>
             <form id="edit-form">
-                <input type="hidden" id="edit-id"> 
-
-                <label for="edit-desc">Описание:</label>
-                <input type="text" id="edit-desc" required>
-
-                <label for="edit-service">Тип услуги:</label>
-                <select id="edit-service" required>
-                    <option value="В ресторане">В ресторане</option>
-                    <option value="Доставка">Доставка</option>
-                </select>
+                <input type="hidden" id="edit-id">
                 
-                <label for="edit-guests">Гостей:</label>
-                <input type="number" id="edit-guests" required min="1">
-                
-                <label for="edit-phone">Телефон:</label>
-                <input type="text" id="edit-phone" required>
+                <div class="form-group">
+                    <label for="edit-desc"><i class="fas fa-align-left"></i> Описание:</label>
+                    <input type="text" id="edit-desc" required>
+                </div>
 
-                <label for="edit-created-at">Дата и время заказа:</label>
-                <input type="datetime-local" id="edit-created-at" required>
+                <div class="form-group">
+                    <label for="edit-service"><i class="fas fa-concierge-bell"></i> Тип услуги:</label>
+                    <select id="edit-service" required>
+                        <option value="В ресторане">В ресторане</option>
+                        <option value="Доставка">Доставка</option>
+                    </select>
+                </div>
                 
-                <div style="margin-top: 20px;">
-                    <button type="submit" class="btn-primary">Сохранить</button>
-                    <button type="button" id="edit-cancel-btn" class="btn-secondary">Отмена</button>
+                <div class="form-group">
+                    <label for="edit-guests"><i class="fas fa-users"></i> Количество гостей:</label>
+                    <input type="number" id="edit-guests" required min="1">
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit-phone"><i class="fas fa-phone"></i> Телефон:</label>
+                    <input type="text" id="edit-phone" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-created-at"><i class="fas fa-calendar-alt"></i> Дата и время заказа:</label>
+                    <input type="datetime-local" id="edit-created-at" required>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Сохранить
+                    </button>
+                    <button type="button" id="edit-cancel-btn" class="btn-secondary">
+                        <i class="fas fa-times"></i> Отмена
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <script src="model.js"></script> 
-    <script src="script.js"></script> 
+    <footer class="app-footer">
+        <div class="footer-content">
+            <p>&copy; 2025 Ресторан "Клод Моне". Лабораторная работа №7</p>
+            <div class="footer-info">
+                <p><i class="fas fa-user-tie"></i> Система управления рестораном</p>
+                <p><i class="fas fa-users"></i> Роли: Заказчик | Курьер | Менеджер</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="model.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

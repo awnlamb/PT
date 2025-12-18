@@ -1,48 +1,148 @@
-// 1. MOCK DATA (ДАННЫЕ) 
+// model.js - Модель данных с системой пользователей
 
-const mockData = [
-    { id: '1', description: 'Бронь на день рождения, нужен торт.', createdAt: new Date('2023-10-01T10:00:00'), author: 'Иванов Иван', phone: '+79001112233', serviceType: 'В ресторане', guests: 5, status: 'Подтвержден' },
-    { id: '2', description: 'Тихий столик у окна.', createdAt: new Date('2023-10-01T11:30:00'), author: 'Петрова Анна', phone: '+79004445566', serviceType: 'В ресторане', guests: 2, status: 'В ожидании' },
-    { id: '3', description: 'Доставка офисных обедов.', createdAt: new Date('2023-10-02T09:15:00'), author: 'Сидоров Алексей', phone: '+79007778899', serviceType: 'Доставка', guests: 10, status: 'В пути' },
-    { id: '4', description: 'Банкет, корпоратив.', createdAt: new Date('2023-10-02T14:00:00'), author: 'ООО "Вектор"', phone: '+79001234567', serviceType: 'В ресторане', guests: 20, status: 'Подтвержден' },
-    { id: '5', description: 'Ужин на двоих.', createdAt: new Date('2023-10-03T18:00:00'), author: 'Смирнов Дмитрий', phone: '+79009876543', serviceType: 'В ресторане', guests: 2, status: 'Завершен' },
-    { id: '6', description: 'Детский праздник', createdAt: new Date('2023-10-04T12:00:00'), author: 'Мария К.', phone: '12345', serviceType: 'В ресторане', guests: 8, status: 'В ожидании' },
-    { id: '7', description: 'Пицца пепперони x3', createdAt: new Date('2023-10-04T13:00:00'), author: 'Коля', phone: '54321', serviceType: 'Доставка', guests: 1, status: 'В пути' },
-    { id: '8', description: 'Встреча выпускников', createdAt: new Date('2023-10-05T17:00:00'), author: 'Иванов Иван', phone: '11223', serviceType: 'В ресторане', guests: 15, status: 'Подтвержден' },
-    { id: '9', description: 'Завтрак', createdAt: new Date('2023-10-06T08:00:00'), author: 'Олег', phone: '33221', serviceType: 'В ресторане', guests: 1, status: 'Завершен' },
-    { id: '10', description: 'Сеты суши', createdAt: new Date('2023-10-06T19:00:00'), author: 'Алина', phone: '44556', serviceType: 'Доставка', guests: 4, status: 'Новый' },
-    { id: '11', description: 'Бизнес-ланч', createdAt: new Date('2023-10-07T12:30:00'), author: 'Максим', phone: '77889', serviceType: 'В ресторане', guests: 3, status: 'Завершен' },
-    { id: '12', description: 'Юбилей 50 лет', createdAt: new Date('2023-10-08T15:00:00'), author: 'Валентина', phone: '99001', serviceType: 'В ресторане', guests: 50, status: 'Подтвержден' },
-    { id: '13', description: 'Бургеры на дом', createdAt: new Date('2023-10-08T20:00:00'), author: 'Стас', phone: '22334', serviceType: 'Доставка', guests: 2, status: 'В пути' },
-    { id: '14', description: 'Кофе и десерт', createdAt: new Date('2023-10-09T10:00:00'), author: 'Виктория', phone: '55667', serviceType: 'В ресторане', guests: 1, status: 'Новый' },
-    { id: '15', description: 'Семейный обед', createdAt: new Date('2023-10-09T14:00:00'), author: 'Иванов Иван', phone: '88990', serviceType: 'В ресторане', guests: 4, status: 'Подтвержден' },
-    { id: '16', description: 'Романтический ужин', createdAt: new Date('2023-10-10T19:30:00'), author: 'Артем', phone: '11122', serviceType: 'В ресторане', guests: 2, status: 'Завершен' },
-    { id: '17', description: 'Заказ пирогов', createdAt: new Date('2023-10-11T09:00:00'), author: 'Офис 303', phone: '33344', serviceType: 'Доставка', guests: 20, status: 'Подтвержден' },
-    { id: '18', description: 'VIP комната', createdAt: new Date('2023-10-12T21:00:00'), author: 'Григорий Лепс', phone: '55566', serviceType: 'В ресторане', guests: 5, status: 'В ожидании' },
-    { id: '19', description: 'Веганское меню', createdAt: new Date('2023-10-13T13:00:00'), author: 'Лиза', phone: '77788', serviceType: 'Доставка', guests: 1, status: 'Новый' },
-    { id: '20', description: 'Чайная церемония', createdAt: new Date('2023-10-14T16:00:00'), author: 'Клуб чая', phone: '99900', serviceType: 'В ресторане', guests: 6, status: 'Подтвержден' }
-];
+// =======================================================
+// === СИСТЕМА ПОЛЬЗОВАТЕЛЕЙ ===
+// =======================================================
 
-// 2. КЛАСС OrderCollection (MODEL)
+class User {
+    constructor(id, username, password, role, attributes = {}) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.role = role; // 'customer', 'courier', 'manager'
+        this.attributes = attributes;
+        this.isAuthenticated = false;
+    }
+
+    authenticate(password) {
+        this.isAuthenticated = (this.password === password);
+        return this.isAuthenticated;
+    }
+
+    logout() {
+        this.isAuthenticated = false;
+    }
+}
+
+class Customer extends User {
+    constructor(id, username, password, attributes = {}) {
+        super(id, username, password, 'customer', attributes);
+        this.defaultPhone = attributes.phone || '';
+        this.defaultAddress = attributes.address || '';
+        this.loyaltyPoints = attributes.loyaltyPoints || 0;
+        this.preferredHall = attributes.preferredHall || '';
+        this.canCreateOrders = true;
+        this.canEditOwnOrders = true;
+        this.canDeleteOwnOrders = true;
+    }
+}
+
+class Courier extends User {
+    constructor(id, username, password, attributes = {}) {
+        super(id, username, password, 'courier', attributes);
+        this.vehicleType = attributes.vehicleType || '';
+        this.rating = attributes.rating || 0;
+        this.currentDeliveryZone = attributes.deliveryZone || '';
+        this.isAvailable = attributes.isAvailable || true;
+        this.canCreateOrders = false;
+        this.canEditOwnOrders = false;
+        this.canDeleteOwnOrders = false;
+        this.canUpdateDeliveryStatus = true;
+        this.assignedOrders = attributes.assignedOrders || [];
+    }
+}
+
+class Manager extends User {
+    constructor(id, username, password, attributes = {}) {
+        super(id, username, password, 'manager', attributes);
+        this.restaurantBranch = attributes.restaurantBranch || 'main';
+        this.accessLevel = attributes.accessLevel || 'full';
+        this.canCreateOrders = true;
+        this.canEditAllOrders = true;
+        this.canDeleteAllOrders = true;
+        this.canViewStatistics = true;
+        this.canManageUsers = true;
+    }
+}
+
+// =======================================================
+// === МОДЕЛЬ ЗАКАЗОВ ===
+// =======================================================
 
 class OrderCollection {
     _orders = [];
+    _users = [];
     STORAGE_KEY = 'orderAppData';
-    _nextOrderId = 1; // Для инкрементирующегося ID
+    USERS_KEY = 'orderAppUsers';
+    _nextOrderId = 1;
+    _currentUser = null;
 
-    constructor(initialData = []) {
+    constructor(initialData = [], initialUsers = []) {
         this.restore();
         
         if (this._orders.length === 0 && initialData.length > 0) {
             this.addAll(initialData);
-            this.save();
         }
         
-        // Установка _nextOrderId на основе восстановленных или mock-данных
+        if (this._users.length === 0 && initialUsers.length > 0) {
+            this.addAllUsers(initialUsers);
+        }
+        
         this._setNextOrderId();
+        this.save();
     }
     
-    // Вспомогательный метод для определения следующего ID
+    // --- МЕТОДЫ ДЛЯ ПОЛЬЗОВАТЕЛЕЙ ---
+
+    addUser(user) {
+        if (!this.getUserById(user.id) && !this.getUserByUsername(user.username)) {
+            this._users.push(user);
+            this.save();
+            return true;
+        }
+        return false;
+    }
+
+    addAllUsers(users) {
+        users.forEach(user => this.addUser(user));
+    }
+
+    getUserById(id) {
+        return this._users.find(user => user.id === id) || null;
+    }
+
+    getUserByUsername(username) {
+        return this._users.find(user => user.username === username) || null;
+    }
+
+    authenticateUser(username, password) {
+        const user = this.getUserByUsername(username);
+        if (user && user.authenticate(password)) {
+            this._currentUser = user;
+            this.save();
+            return user;
+        }
+        return null;
+    }
+
+    logoutUser() {
+        if (this._currentUser) {
+            this._currentUser.logout();
+        }
+        this._currentUser = null;
+        this.save();
+    }
+
+    getCurrentUser() {
+        return this._currentUser;
+    }
+
+    getAllUsers() {
+        return [...this._users];
+    }
+
+    // --- МЕТОДЫ ДЛЯ ЗАКАЗОВ ---
+
     _setNextOrderId() {
         const currentMaxId = this._orders.reduce((max, order) => {
             const idNum = parseInt(order.id, 10);
@@ -51,15 +151,20 @@ class OrderCollection {
         this._nextOrderId = currentMaxId + 1;
     }
 
-    // --- МЕТОДЫ PERSISTENCE ---
-
     save() {
         try {
             const serializableOrders = this._orders.map(order => ({
                 ...order,
-                createdAt: order.createdAt.toISOString() // Сохраняем дату в виде ISO строки
+                createdAt: order.createdAt.toISOString()
             }));
+
+            const serializableUsers = this._users.map(user => ({
+                ...user,
+                isAuthenticated: false
+            }));
+
             localStorage.setItem(this.STORAGE_KEY, JSON.stringify(serializableOrders));
+            localStorage.setItem(this.USERS_KEY, JSON.stringify(serializableUsers));
         } catch (e) {
             console.error("Ошибка при сохранении в localStorage:", e);
         }
@@ -67,27 +172,70 @@ class OrderCollection {
 
     restore() {
         try {
-            const data = localStorage.getItem(this.STORAGE_KEY);
-            if (data) {
-                const parsedData = JSON.parse(data);
-                
+            // Восстанавливаем заказы
+            const ordersData = localStorage.getItem(this.STORAGE_KEY);
+            if (ordersData) {
+                const parsedData = JSON.parse(ordersData);
                 this._orders = parsedData.map(order => ({
                     ...order,
-                    createdAt: new Date(order.createdAt) // Обратно в объект Date
+                    createdAt: new Date(order.createdAt)
                 }));
+            }
+
+            // Восстанавливаем пользователей
+            const usersData = localStorage.getItem(this.USERS_KEY);
+            if (usersData) {
+                const parsedUsers = JSON.parse(usersData);
+                
+                this._users = parsedUsers.map(userData => {
+                    let user;
+                    switch(userData.role) {
+                        case 'customer':
+                            user = new Customer(
+                                userData.id,
+                                userData.username,
+                                userData.password,
+                                userData.attributes
+                            );
+                            break;
+                        case 'courier':
+                            user = new Courier(
+                                userData.id,
+                                userData.username,
+                                userData.password,
+                                userData.attributes
+                            );
+                            break;
+                        case 'manager':
+                            user = new Manager(
+                                userData.id,
+                                userData.username,
+                                userData.password,
+                                userData.attributes
+                            );
+                            break;
+                        default:
+                            user = new User(
+                                userData.id,
+                                userData.username,
+                                userData.password,
+                                userData.role,
+                                userData.attributes
+                            );
+                    }
+                    return user;
+                });
             }
         } catch (e) {
             console.error("Ошибка при восстановлении из localStorage:", e);
             localStorage.removeItem(this.STORAGE_KEY);
+            localStorage.removeItem(this.USERS_KEY);
         }
     }
-
-    // --- CRUD МЕТОДЫ ---
 
     getObjs(skip = 0, top = 10, filterConfig = {}) {
         let result = [...this._orders];
         
-        // Фильтрация (простая реализация: точное совпадение или частичное для строк)
         if (Object.keys(filterConfig).length > 0) {
             result = result.filter(order => {
                 for (let key in filterConfig) {
@@ -95,10 +243,8 @@ class OrderCollection {
                     const orderValue = order[key] ? order[key].toString().toLowerCase() : '';
                     
                     if (key === 'author') {
-                        // Частичное совпадение для поиска по автору
                         if (!orderValue.includes(filterValue)) return false;
                     } else if (orderValue !== filterValue) {
-                        // Точное совпадение для статуса
                         return false;
                     }
                 }
@@ -106,10 +252,7 @@ class OrderCollection {
             });
         }
 
-        // Сортировка: по дате создания (createdAt) от нового к старому.
         result.sort((a, b) => b.createdAt - a.createdAt);
-
-        // Пагинация
         return result.slice(skip, skip + top);
     }
 
@@ -118,18 +261,16 @@ class OrderCollection {
     }
 
     validateObj(obj) {
-        // Проверяем обязательные поля
         if (!obj.id || typeof obj.id !== 'string') return false;
         if (!obj.description || typeof obj.description !== 'string' || obj.description.length >= 200) return false;
-        if (!(obj.createdAt instanceof Date) || isNaN(obj.createdAt)) return false; // Проверка на валидность даты
+        if (!(obj.createdAt instanceof Date) || isNaN(obj.createdAt)) return false;
         if (!obj.author || typeof obj.author !== 'string' || obj.author.trim() === '') return false;
-        if (!obj.phone || typeof obj.phone !== 'string') return false; 
+        if (!obj.phone || typeof obj.phone !== 'string') return false;
         if (typeof obj.guests !== 'number' || obj.guests < 1) return false;
         return true;
     }
 
     addObj(obj) {
-        // 5. Инкрементирующийся ID
         if (!obj.id) {
             obj.id = (this._nextOrderId++).toString();
         }
@@ -147,21 +288,16 @@ class OrderCollection {
         if (index === -1) return false;
 
         const currentObj = this._orders[index];
-        
-        // Разрешаем все поля, кроме ID. Дату (createdAt) обрабатываем отдельно.
-        const { id: _, ...allowedUpdates } = newFields; 
-
+        const { id: _, ...allowedUpdates } = newFields;
         let updatedObj = { ...currentObj, ...allowedUpdates };
 
-        // 5. Обработка изменения даты (конвертация строки в Date)
         if (newFields.createdAt && typeof newFields.createdAt === 'string') {
-             const newDate = new Date(newFields.createdAt);
-             if (!isNaN(newDate)) {
-                 updatedObj.createdAt = newDate;
-             }
+            const newDate = new Date(newFields.createdAt);
+            if (!isNaN(newDate)) {
+                updatedObj.createdAt = newDate;
+            }
         }
         
-        // Валидация обновленного объекта
         if (this.validateObj(updatedObj)) {
             this._orders[index] = updatedObj;
             this.save();
@@ -184,12 +320,81 @@ class OrderCollection {
     addAll(objs) {
         const failed = [];
         objs.forEach(obj => { 
-             // При добавлении mock-данных не инкрементируем счетчик, используем их ID
-             if (!this.addObj(obj)) failed.push(obj); 
+            if (!this.addObj(obj)) failed.push(obj);
         });
-        return failed; 
+        return failed;
+    }
+
+    // Методы для статистики (для менеджера)
+    getRevenueByMonth() {
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+        
+        const completedOrders = this._orders.filter(order => {
+            const orderDate = order.createdAt;
+            return order.status === 'Завершен' && 
+                   orderDate.getMonth() === currentMonth &&
+                   orderDate.getFullYear() === currentYear;
+        });
+
+        // Пример: каждый заказ приносит 1000 рублей
+        return completedOrders.length * 1000;
+    }
+
+    getPopularDishes() {
+        // Простая имитация популярных блюд
+        return [
+            { name: 'Стейк Рибай', count: 25 },
+            { name: 'Салат Цезарь', count: 18 },
+            { name: 'Паста Карбонара', count: 15 },
+            { name: 'Пицца Маргарита', count: 12 }
+        ];
     }
 }
 
+// =======================================================
+// === ИНИЦИАЛИЗАЦИЯ ДАННЫХ ===
+// =======================================================
+
+const mockData = [
+    { id: '1', description: 'Бронь на день рождения, нужен торт.', createdAt: new Date('2023-10-01T10:00:00'), author: 'ivanov', phone: '+79001112233', serviceType: 'В ресторане', guests: 5, status: 'Подтвержден' },
+    { id: '2', description: 'Тихий столик у окна.', createdAt: new Date('2023-10-01T11:30:00'), author: 'petrova', phone: '+79004445566', serviceType: 'В ресторане', guests: 2, status: 'В ожидании' },
+    { id: '3', description: 'Доставка офисных обедов.', createdAt: new Date('2023-10-02T09:15:00'), author: 'ivanov', phone: '+79007778899', serviceType: 'Доставка', guests: 10, status: 'В пути' },
+    { id: '4', description: 'Банкет, корпоратив.', createdAt: new Date('2023-10-02T14:00:00'), author: 'manager1', phone: '+79001234567', serviceType: 'В ресторане', guests: 20, status: 'Подтвержден' },
+    { id: '5', description: 'Ужин на двоих.', createdAt: new Date('2023-10-03T18:00:00'), author: 'ivanov', phone: '+79009876543', serviceType: 'В ресторане', guests: 2, status: 'Завершен' },
+    { id: '6', description: 'Детский праздник', createdAt: new Date('2023-10-04T12:00:00'), author: 'petrova', phone: '12345', serviceType: 'В ресторане', guests: 8, status: 'В ожидании' },
+    { id: '7', description: 'Пицца пепперони x3', createdAt: new Date('2023-10-04T13:00:00'), author: 'petrova', phone: '54321', serviceType: 'Доставка', guests: 1, status: 'В пути' },
+    { id: '8', description: 'Встреча выпускников', createdAt: new Date('2023-10-05T17:00:00'), author: 'ivanov', phone: '11223', serviceType: 'В ресторане', guests: 15, status: 'Подтвержден' },
+    { id: '9', description: 'Завтрак', createdAt: new Date('2023-10-06T08:00:00'), author: 'manager1', phone: '33221', serviceType: 'В ресторане', guests: 1, status: 'Завершен' },
+    { id: '10', description: 'Сеты суши', createdAt: new Date('2023-10-06T19:00:00'), author: 'ivanov', phone: '44556', serviceType: 'Доставка', guests: 4, status: 'Новый' }
+];
+
+const initialUsers = [
+    new Customer('1', 'ivanov', '123456', {
+        phone: '+79001112233',
+        address: 'ул. Ленина, 10',
+        loyaltyPoints: 150,
+        preferredHall: 'Основной зал'
+    }),
+    new Courier('2', 'courier1', '123456', {
+        vehicleType: 'car',
+        rating: 4.8,
+        deliveryZone: 'Центральный район',
+        isAvailable: true,
+        assignedOrders: ['3', '7', '10']
+    }),
+    new Manager('3', 'manager1', '123456', {
+        restaurantBranch: 'main',
+        accessLevel: 'full'
+    }),
+    new Customer('4', 'petrova', '123456', {
+        phone: '+79004445566',
+        address: 'ул. Мира, 25',
+        loyaltyPoints: 75,
+        preferredHall: 'Терраса'
+    })
+];
+
 // Глобальный экземпляр Модели
-const systemModel = new OrderCollection(mockData);
+const systemModel = new OrderCollection(mockData, initialUsers);
